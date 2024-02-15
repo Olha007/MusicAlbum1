@@ -21,7 +21,7 @@ public class HibernateMain {
 
         } catch (HibernateException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (session != null && session.isOpen()) {
                 session.close();
             }

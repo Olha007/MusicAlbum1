@@ -1,6 +1,7 @@
 package ua.edu.znu.musicAlbum.hibernateapp.entities;
 
 import lombok.Data;
+
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;

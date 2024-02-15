@@ -1,21 +1,20 @@
 package ua.edu.znu.musicAlbum.hibernateapp;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import ua.edu.znu.musicAlbum.hibernateapp.entities.*;
 import ua.edu.znu.musicAlbum.utils.HibernateJPAUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 public class MainHibernateQueries {
 
     public static void main(String[] args) {
         try (Session session = HibernateJPAUtils.getSessionFactory().openSession()) {
-            /* Додавання даних */
+            //Додавання даних
             Artist artist1 = new Artist();
             artist1.setFirstName("John");
             artist1.setLastName("Doe");
@@ -103,15 +102,87 @@ public class MainHibernateQueries {
             System.out.println("Info for artist (Native SQL): " + artistName + " " + artistSurname + ":");
             System.out.println(foundArtist);
 
+            // Використання HQL з параметрами
+            int releaseYear = 2022;
+            hqlQuery = session.createQuery("from Album a where a.releaseYear = :year")
+                    .setParameter("year", releaseYear);
+            Album foundAlbum = (Album) hqlQuery.uniqueResult();
+            System.out.println("Search album with year " + releaseYear + " (HQL):");
+            System.out.println(foundAlbum);
 
+            // Використання Criteria API з параметрами
+            String groupName = "Band 1";
+            System.out.println("Search group with name " + groupName + " (Criteria API):");
+            criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Group> criteriaQueryGroup = criteriaBuilder.createQuery(Group.class);
+            Root<Group> rootGroup = criteriaQueryGroup.from(Group.class);
+            criteriaQueryGroup.select(rootGroup).where(criteriaBuilder.equal(rootGroup.get("groupName"), groupName));
+            Query<Group> singleGroupQuery = session.createQuery(criteriaQueryGroup);
+            Group foundGroup = singleGroupQuery.uniqueResult();
+            System.out.println(foundGroup);
 
+            /* UPDATE WHERE */
+            session.beginTransaction();
+            // Використання Native SQL для оновлення
+            String newName = "Johnathan";
+            String oldName = "John";
+            sqlQuery = session.createSQLQuery("UPDATE artist SET first_name = :newName WHERE first_name = :oldName");
+            sqlQuery.setParameter("newName", newName);
+            sqlQuery.setParameter("oldName", oldName);
+            int updatedRows = sqlQuery.executeUpdate();
+            System.out.println("Updated by Native SQL query " + updatedRows + " rows.");
 
+            // Використання HQL для оновлення
+            int newReleaseYear = 2024;
+            int oldReleaseYear = 2023;
+            hqlQuery = session.createQuery("update Album set releaseYear = :newYear where releaseYear = :oldYear");
+            hqlQuery.setParameter("newYear", newReleaseYear);
+            hqlQuery.setParameter("oldYear", oldReleaseYear);
+            updatedRows = hqlQuery.executeUpdate();
+            System.out.println("Updated by HQL query " + updatedRows + " rows.");
 
+            // Використання Criteria API для оновлення
+            int newGroupYear = 2025;
+            int oldGroupYear = 2024;
+            CriteriaUpdate<Group> updateCriteriaQuery = criteriaBuilder.createCriteriaUpdate(Group.class);
+            Root<Group> groupRoot = updateCriteriaQuery.from(Group.class);
+            updateCriteriaQuery.set("year", newGroupYear);
+            updateCriteriaQuery.where(criteriaBuilder.equal(groupRoot.get("year"), oldGroupYear));
+            Query<Group> updateGroupQuery = session.createQuery(updateCriteriaQuery);
+            updatedRows = updateGroupQuery.executeUpdate();
+            System.out.println("Updated by Criteria API query " + updatedRows + " rows.");
+            session.getTransaction().commit();
 
+            /* DELETE WHERE */
+            session.beginTransaction();
+            // Використання Native SQL для видалення
+            int artistId = 1;
+            sqlQuery = session.createSQLQuery("DELETE FROM artist WHERE artist_id = :artistId");
+            sqlQuery.setParameter("artistId", artistId);
+            int deletedRows = sqlQuery.executeUpdate();
+            System.out.println("Deleted by Native SQL query " + deletedRows + " rows.");
 
+            // Використання HQL для видалення
+            int albumId = 1;
+            hqlQuery = session.createQuery("delete from Album where id=:albumId");
+            hqlQuery.setParameter("albumId", albumId);
+            deletedRows = hqlQuery.executeUpdate();
+            System.out.println("Deleted by HQL query " + deletedRows + " rows.");
 
+            // Використання Criteria API для видалення
+            groupName = "Band 2";
+            CriteriaDelete<Group> deleteCriteriaQuery = criteriaBuilder.createCriteriaDelete(Group.class);
+            Root<Group> groupRootDelete = deleteCriteriaQuery.from(Group.class);
+            deleteCriteriaQuery.where(criteriaBuilder.equal(groupRootDelete.get("groupName"), groupName));
+            Query<Group> deleteGroupQuery = session.createQuery(deleteCriteriaQuery);
+            deletedRows = deleteGroupQuery.executeUpdate();
+            System.out.println("Deleted by Criteria API query " + deletedRows + " rows.");
 
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
+
     }
 }
 

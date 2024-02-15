@@ -5,8 +5,8 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import ua.edu.znu.musicAlbum.hibernateapp.entities.*;
 import ua.edu.znu.musicAlbum.utils.HibernateJPAUtils;
-import java.util.List;
 
+import java.util.List;
 
 public class MainHibernate {
     public static void main(String[] args) {

@@ -1,6 +1,7 @@
 package ua.edu.znu.musicAlbum.hibernateapp.entities;
 
 import javax.persistence.*;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

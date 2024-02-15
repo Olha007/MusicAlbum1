@@ -1,6 +1,7 @@
 package ua.edu.znu.musicAlbum.hibernateapp;
 
 import ua.edu.znu.musicAlbum.hibernateapp.entities.Album;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -15,7 +16,6 @@ public class MainJPA {
             entityManagerFactory = Persistence.createEntityManagerFactory("musicAlbum");
             entityManager = entityManagerFactory.createEntityManager();
 
-            /* Додавання двох екземплярів пов'язаних сутностей */
             entityManager.getTransaction().begin();
 
             // Створення та збереження першого об'єкта
@@ -32,12 +32,12 @@ public class MainJPA {
 
             entityManager.getTransaction().commit();
 
-            /* Читання об'єктів за основним атрибутом */
+            //Читання об'єктів за основним атрибутом
             Long albumId = 1L;
             Album foundAlbum = entityManager.find(Album.class, albumId);
             System.out.println("Знайдений альбом за основним атрибутом: " + foundAlbum);
 
-            /* Оновлення атрибутів об'єктів за умовою */
+            // Оновлення атрибутів об'єктів за умовою
             entityManager.getTransaction().begin();
 
             // Знаходимо альбом за умовою і оновлюємо його атрибут
@@ -49,7 +49,7 @@ public class MainJPA {
 
             entityManager.getTransaction().commit();
 
-            /* Видалення об'єктів за умовою */
+            //Видалення об'єктів за умовою
             entityManager.getTransaction().begin();
 
             // Знаходимо альбом за умовою і видаляємо його
@@ -60,7 +60,7 @@ public class MainJPA {
 
             entityManager.getTransaction().commit();
 
-            /* Виведення всіх альбомів */
+            //Виведення всіх альбомів
             List<Album> albums = entityManager.createQuery("SELECT a FROM Album a", Album.class)
                     .getResultList();
             System.out.println("Усі альбоми:");

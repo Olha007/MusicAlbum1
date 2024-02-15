@@ -3,6 +3,7 @@ package ua.edu.znu.musicAlbum.hibernateapp.entities;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;

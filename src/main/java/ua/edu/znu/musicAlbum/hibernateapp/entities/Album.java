@@ -1,6 +1,7 @@
 package ua.edu.znu.musicAlbum.hibernateapp.entities;
 
 import lombok.*;
+
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -8,6 +9,15 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "album")
+
+@NamedQueries({
+        @NamedQuery(name = "Album.findByNameOrderByReleaseYearAsc", query = "SELECT a FROM Album a WHERE a.albumName = :name ORDER BY a.releaseYear ASC"),
+        @NamedQuery(name = "Album.updateReleaseYearByName",
+                query = "UPDATE Album a SET a.releaseYear = :releaseYear WHERE a.albumName = :name"),
+        @NamedQuery(name = "Album.deleteByName",
+                query = "DELETE FROM Album a WHERE a.albumName = :name")
+})
+
 public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
